@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="errDeptNotFound">Département non trouvé.</string>
+    <string name="errBadNoDept">Numéro de département invalide</string>
+
+</resources>

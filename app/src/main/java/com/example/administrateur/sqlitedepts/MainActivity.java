@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import static com.example.administrateur.sqlitedepts.Tools.datToStr;
+
 public class MainActivity extends AppCompatActivity {
 
     private Departement dept;
@@ -42,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
         String search = txtSearch.getText().toString();
 
         try {
-            dept = new Departement(this);
-            dept.select(search);
+            dept = new Departement(this, search);
+//            dept.select(search);
 
             txtNoDept.setText(dept.getNoDept());
             txtNoRegion.setText(String.valueOf(dept.getNoRegion()));
             txtNom.setText(dept.getNom());
             txtNomStd.setText(dept.getNomStd());
             txtSurface.setText(String.valueOf(dept.getSurface()));
-            txtDateCreation.setText(dept.getDateCreation());
+            txtDateCreation.setText(datToStr(dept.getDateCreation()));
             txtChefLieu.setText(dept.getChefLieu());
             txtUrlWiki.setText(dept.getUrlWiki());
 
@@ -76,7 +78,40 @@ public class MainActivity extends AppCompatActivity {
         txtNoDept.setEnabled(true);
     }
 
-    public void btnDelete (View v){
+    public void btnSave (View v) throws Exception {
+
+        dept = new Departement(this);
+
+        dept.setNoDept(txtNoDept.getText().toString());
+        dept.setNoRegion(Integer.parseInt(txtNoRegion.getText().toString()));
+        dept.setNom(txtNom.getText().toString());
+        dept.setNomStd(txtNomStd.getText().toString());
+        dept.setSurface(Integer.parseInt(txtSurface.getText().toString()));
+        dept.setDateCreation(txtDateCreation.getText().toString());
+        dept.setChefLieu(txtChefLieu.getText().toString());
+        dept.setUrlWiki(txtUrlWiki.getText().toString());
+
+        try {
+            Departement d2 = new Departement(this, txtNoDept.getText().toString());
+            dept.update();
+            Toast.makeText(this, "Département mis à jour", Toast.LENGTH_LONG).show();
+        }
+        catch (Exception ex){
+
+            try {
+                dept.insert();
+            }
+            catch (Exception ex2){
+               Toast.makeText(this, "?????", Toast.LENGTH_LONG).show();
+            }
+            Toast.makeText(this, "Département ajouté", Toast.LENGTH_LONG).show();
+        }
+//        catch (Exception ex){
+//            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
+//        }
+    }
+
+    public void btnDelete (View v) throws Departement.DbException {
         dept = new Departement(this);
         dept.setNoDept(txtNoDept.getText().toString());
 
@@ -87,54 +122,4 @@ public class MainActivity extends AppCompatActivity {
         }
         btnClear(v);
     }
-
-    public void btnSave (View v){
-
-        try {
-            dept = new Departement(this);
-            dept.setNoDept(txtNoDept.getText().toString());
-            dept.setNoRegion(Integer.parseInt(txtNoRegion.getText().toString()));
-            dept.setNom(txtNom.getText().toString());
-            dept.setNomStd(txtNomStd.getText().toString());
-            dept.setSurface(Integer.parseInt(txtSurface.getText().toString()));
-            dept.setDateCreation(txtDateCreation.getText().toString());
-            dept.setChefLieu(txtChefLieu.getText().toString());
-            dept.setUrlWiki(txtUrlWiki.getText().toString());
-
-            String insert = txtNoDept.getText().toString();
-            String update = txtNoDept.getText().toString();
-
-            if (!txtNoDept.equals("")) {
-
-                Toast.makeText(this, "insertion", Toast.LENGTH_LONG).show();
-                dept.insert();
-            }
-            else {
-                Toast.makeText(this, "udpate", Toast.LENGTH_LONG).show();
-                dept.update();
-            }
-        }
-        catch (Exception ex){
-            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
-    public void btnTest (View v){
-// Test de la méthode insert();
-         dept = new Departement(this);
-        dept.setNoDept("101");
-        dept.setNoRegion(93);
-        dept.setNom("Nouveau dept - test");
-        dept.setNomStd("NOUVEAU DEPT");
-        dept.setSurface(5000);
-        dept.setDateCreation("2017-01-01");
-        dept.setChefLieu("Ville");
-        dept.setUrlWiki("http://");
-        try {
-            dept.insert();
-        } catch (Exception ex) {
-            Toast.makeText(this, ex.getMessage(), Toast.LENGTH_LONG).show();
-        }
-    }
-
 }
